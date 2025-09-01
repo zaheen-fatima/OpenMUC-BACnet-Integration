@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Implementation-Title: Gradle Quickstart
+Implementation-Version: 3.2.3-openmucextensions1
+

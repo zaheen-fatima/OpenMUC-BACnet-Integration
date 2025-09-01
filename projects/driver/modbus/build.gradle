@@ -1,0 +1,33 @@
+def projectName = "OpenMUC Driver - Modbus"
+def projectDescription = "Modbus driver for the OpenMUC framework."
+
+configurations.create('embed')
+
+dependencies {
+    implementation project(':openmuc-core-spi')
+
+    implementation group: 'com.ghgande', name: 'j2mod', version: j2modVersion
+    embed group: 'com.ghgande', name: 'j2mod', version: j2modVersion
+
+    testImplementation group: "commons-codec", name: "commons-codec", version: commonsCodecVersion
+}
+
+jar {
+    bnd('Bundle-Name': projectName, 'Bundle-ClassPath': '.,lib/j2mod-' + j2modVersion+'.jar',
+            'Import-Package': '!com.ghgande.j2mod*,!com.fazecast.jSerialComm;resolution:=optional,*' + jarDefaultImportPackageVersion)
+
+    into('lib') {
+        from configurations.embed
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = projectName
+                description = projectDescription
+            }
+        }
+    }
+}

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <driver id="bacnet">
+
+        <!-- Server device -->
+        <device id="ServerDevice">
+            <!-- BACnet device instance for server -->
+            <deviceAddress>260001</deviceAddress>
+
+            <!-- driver settings -->
+            <settings>
+                isServer=true;
+                localDevicePort=47808;
+                broadcastIP=255.255.255.255;
+                localBindAddress=192.168.0.122;
+                localDeviceId=260001
+            </settings>
+
+            <connectRetryInterval>5m</connectRetryInterval>
+
+            <!-- Server channels: values will be generated -->
+            <channel id="ServerFloat">
+                <channelAddress>L'Float1</channelAddress>
+                <listening>true</listening>
+                <unit>analogValue;degreesCelsius</unit>
+            </channel>
+
+            <channel id="ServerBool">
+                <channelAddress>L'Bool1</channelAddress>
+                <listening>true</listening>
+                <unit>binaryValue;noUnits</unit>
+            </channel>
+
+        </device>
+
+        <!-- Client device -->
+        <device id="ClientDevice">
+            <!-- BACnet device instance for client -->
+            <!-- Include server IP in deviceAddress for remote connection -->
+            <deviceAddress>260001;192.168.0.122</deviceAddress>
+
+            <settings>
+                isServer=false;
+                localDevicePort=47809;    <!-- client's own BACnet port -->
+                devicePort=47808;         <!-- remote server's BACnet port -->
+                broadcastIP=255.255.255.255;
+                localBindAddress=0.0.0.0; <!-- bind to all interfaces -->
+                localDeviceId=260002
+            </settings>
+
+            <connectRetryInterval>5m</connectRetryInterval>
+
+            <!-- Client channels: must match server channelAddresses exactly -->
+            <channel id="ClientFloat">
+                <channelAddress>L'Float1</channelAddress>
+                <listening>true</listening>
+                <unit>analogValue;degreesCelsius</unit>
+            </channel>
+
+            <channel id="ClientBool">
+                <channelAddress>L'Bool1</channelAddress>
+                <listening>true</listening>
+                <unit>binaryValue;noUnits</unit>
+            </channel>
+        </device>
+
+    </driver>
+</configuration>

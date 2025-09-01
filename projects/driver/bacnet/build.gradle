@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+
+    id 'biz.aQute.bnd.builder' version '6.4.0' // same Bnd tool version used in Modbus
+}
+
+group = 'org.openmuc.framework'
+version = '1.0.0'
+description = 'OpenMUC Driver - BACnet'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+repositories {
+    mavenCentral()
+    flatDir { name 'additionalLibraries'
+        dirs rootDir.getAbsolutePath() + '/lib' }
+configurations {
+    embed
+    implementation.extendsFrom(embed) }
+}
+
+dependencies {
+    def openmucversion = '0.20.1'
+
+    implementation 'org.osgi:osgi_R4_compendium:1.0'
+    implementation 'org.slf4j:slf4j-api:1.7.21'
+    implementation "org.openmuc.framework:openmuc-core-spi:${openmucversion}"
+    implementation "org.openmuc.framework:openmuc-core-api:${openmucversion}"
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'org.apache.commons:commons-lang3:3.4'
+    implementation files("/lib/BACnet4J-3.2.3-openmucextensions1.jar")
+    embed files('/lib/BACnet4J-3.2.3-openmucextensions1.jar')
+    embed 'com.google.code.gson:gson:2.8.0'
+    embed 'org.apache.commons:commons-lang3:3.4'
+    testImplementation 'junit:junit:4.12' }
+
+// OSGi manifest generation
+jar {
+    from {
+        configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    bnd(
+                'Bundle-ManifestVersion': '2',
+                'Bundle-Name': 'OpenMUC Driver - BACnet',
+                'Bundle-SymbolicName': 'org.openmuc.framework.openmuc-driver-bacnet',
+                'Bundle-Version': version,
+                'Bundle-ClassPath': '.,lib/bacnet4j-3.2.3-openmucextensions1.jar',
+
+
+            'Import-Package': 'org.osgi.framework;version="[1.8,2)",org.openmuc.framework.driver.spi;version="[0.20,1)",org.osgi.service.component.annotations;version="[1.4,2)",com.serotonin*,!org.apache.commons*,!com.google.gson*,*',
+
+                '-dsannotations': '*'
+        )
+
+    into('lib') {
+        from configurations.embed
+        from("$projectDir/lib/BACnet4J-3.2.3-openmucextensions1.jar")
+    }
+}
+
+// Copy driver JAR to framework/bundle after build
+task copyJarToBundle(type: Copy) {
+    from(jar)
+    into("$rootDir/framework/bundle")
+}
+copyJarToBundle.dependsOn(jar)

@@ -1,0 +1,8 @@
+Bundle-ManifestVersion=2
+Bundle-SymbolicName=org.openmuc.framework.openmuc-driver-bacnet
+Bundle-Version=1.0.0
+Bundle-Name=OpenMUC Driver - BACnet
+Bundle-Vendor=Fraunhofer ISE
+Bundle-ClassPath=.,lib/bacnet4j-3.2.3-openmucextensions1.jar
+Import-Package=org.osgi.framework;version\="[1.8,2)",org.openmuc.framework.driver.spi;version\="[0.20,1)",org.osgi.service.component.annotations;version\="[1.4,2)",com.serotonin*,\!org.apache.commons*,\!com.google.gson*,*
+-dsannotations=*

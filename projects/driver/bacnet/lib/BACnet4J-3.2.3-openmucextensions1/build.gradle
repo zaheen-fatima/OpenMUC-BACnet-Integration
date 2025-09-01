@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'biz.aQute.bnd.builder' version '6.4.0'  // for OSGi manifest
+}
+
+group = 'com.serotonin'
+version = '3.2.3-openmucextensions1'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    embed
+}
+
+dependencies {
+    // Core deps
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+
+    // Add OpenMUC SPI if you use OpenMUC interfaces
+    compileOnly 'org.openmuc.framework:openmuc-core-spi:0.16.0'
+
+    // Mark SLF4J for embedding (so no ClassDefNotFound)
+    embed 'org.slf4j:slf4j-api:1.7.36'
+}
+
+// OSGi manifest instructions
+jar {
+    from {
+        configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes(
+                'Bundle-ManifestVersion': '2',
+                'Bundle-Name': 'BACnet4J',
+                'Bundle-SymbolicName': 'com.serotonin.bacnet4j',
+                'Bundle-Version': version,
+                'Bundle-Vendor': 'Serotonin Software',
+                'Bundle-RequiredExecutionEnvironment': 'JavaSE-1.8',
+                'Export-Package': 'com.serotonin.bacnet4j.*',
+                'Import-Package': 'org.slf4j;resolution:=optional'
+        )
+    }
+}
+
+// Ensure bnd plugin picks it up (optional but safer)
+bnd {
+    bndFile = file("$projectDir/bnd.bnd")
+}
+
+// ---- AUTO COPY TO OPENMUC BUNDLE FOLDER ----
+task copyToOpenMucBundle(type: Copy) {
+    dependsOn build
+    from("$buildDir/libs/${archivesBaseName}-${version}.jar")
+    into("$rootDir/framework/bundle")   // adjust if your OpenMUC bundle folder is different
+}
+
+// Run build + copy in one go
+build.finalizedBy(copyToOpenMucBundle)
