@@ -137,10 +137,7 @@ import org.openmuc.framework.data.BooleanValue;
 import org.openmuc.framework.data.FloatValue;
 import org.openmuc.framework.dataaccess.Channel;
 import org.openmuc.framework.dataaccess.DataAccessService;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,55 +175,52 @@ public class BacnetApp {
         logger.info("BACnetApp activated.");
 
         try {
-            // -------------------
-            // Get channels from channels.xml
-            // -------------------
+            // Server channels
             serverFloatChannel = dataAccessService.getChannel("ServerFloat");
             serverBoolChannel = dataAccessService.getChannel("ServerBool");
 
-            clientFloatChannel = dataAccessService.getChannel("ClientFloat");
-            clientBoolChannel = dataAccessService.getChannel("ClientBool");
-
-            if (serverFloatChannel == null || serverBoolChannel == null ||
-                    clientFloatChannel == null || clientBoolChannel == null) {
-                logger.error("BACnet channels not found in channels.xml.");
+            if (serverFloatChannel == null || serverBoolChannel == null) {
+                logger.error("Server channels not found.");
                 return;
             }
 
-            // -------------------
-            // Scheduler: update server channels every 2 seconds
-            // -------------------
-            scheduler = Executors.newScheduledThreadPool(1);
-            scheduler.scheduleAtFixedRate(this::updateServerAndClientChannels, 0, 2, TimeUnit.SECONDS);
+            // Optional client channels
+            clientFloatChannel = dataAccessService.getChannel("ClientFloat");
+            clientBoolChannel = dataAccessService.getChannel("ClientBool");
 
-            logger.info("Scheduler started: server updates will propagate to client channels.");
+            scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.scheduleAtFixedRate(this::updateChannels, 0, 2, TimeUnit.SECONDS);
+
+            logger.info("Scheduler started: server updates and client propagation.");
 
         } catch (Exception e) {
             logger.error("Error initializing BACnetApp", e);
         }
     }
 
-    // -------------------
-    // Update server and client channels
-    // -------------------
-    private void updateServerAndClientChannels() {
+    private void updateChannels() {
         try {
-            float newFloatValue = random.nextFloat() * 100; // 0-100
+            float newFloatValue = random.nextFloat() * 100;
             boolean newBoolValue = random.nextBoolean();
 
-            // Write to server channels
+            // Update server channels
             serverFloatChannel.write(new FloatValue(newFloatValue));
             serverBoolChannel.write(new BooleanValue(newBoolValue));
-
-            // Write same values to client channels
-            clientFloatChannel.write(new FloatValue(newFloatValue));
-            clientBoolChannel.write(new BooleanValue(newBoolValue));
-
             logger.info("Server channels updated: Float={}, Bool={}", newFloatValue, newBoolValue);
-            logger.info("Client channels updated: Float={}, Bool={}", newFloatValue, newBoolValue);
+
+            // Update client channels if available
+            if (clientFloatChannel != null && clientBoolChannel != null) {
+                try {
+                    clientFloatChannel.write(new FloatValue(newFloatValue));
+                    clientBoolChannel.write(new BooleanValue(newBoolValue));
+                    logger.info("Client channels updated: Float={}, Bool={}", newFloatValue, newBoolValue);
+                } catch (Exception e) {
+                    logger.warn("Client not connected yet. Will retry next update.");
+                }
+            }
 
         } catch (Exception e) {
-            logger.error("Error updating channels", e);
+            logger.error("Error updating server channels", e);
         }
     }
 
@@ -238,3 +232,5 @@ public class BacnetApp {
         }
     }
 }
+
+

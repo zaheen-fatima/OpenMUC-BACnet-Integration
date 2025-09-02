@@ -17,7 +17,7 @@ import com.serotonin.bacnet4j.util.PropertyReferences;
  */
 public abstract class BACnetConnection implements Connection {
 
-    protected final static Logger logger = LoggerFactory.getLogger(BACnetDriver.class);
+    protected final static Logger logger = LoggerFactory.getLogger(BACnetConnection.class);
     protected String separator = "#";
 
     /**

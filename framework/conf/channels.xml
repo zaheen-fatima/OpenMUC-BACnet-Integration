@@ -1,66 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
     <driver id="bacnet">
 
-        <!-- Server device -->
+        <!-- BACnet Server -->
         <device id="ServerDevice">
-            <!-- BACnet device instance for server -->
             <deviceAddress>260001</deviceAddress>
+            <settings>isServer=true;localDevicePort=47808;broadcastIP=255.255.255.255;localBindAddress=192.168.0.122;localDeviceId=260001</settings>
 
-            <!-- driver settings -->
-            <settings>
-                isServer=true;
-                localDevicePort=47808;
-                broadcastIP=255.255.255.255;
-                localBindAddress=192.168.0.122;
-                localDeviceId=260001
-            </settings>
-
-            <connectRetryInterval>5m</connectRetryInterval>
-
-            <!-- Server channels: values will be generated -->
+            <!-- Server exposes Analog Value 1 -->
             <channel id="ServerFloat">
-                <channelAddress>L'Float1</channelAddress>
-                <listening>true</listening>
+                <channelAddress>analogValue:1</channelAddress>
                 <unit>analogValue;degreesCelsius</unit>
-            </channel>
-
-            <channel id="ServerBool">
-                <channelAddress>L'Bool1</channelAddress>
                 <listening>true</listening>
-                <unit>binaryValue;noUnits</unit>
             </channel>
 
+            <!-- Server exposes Binary Value 1 -->
+            <channel id="ServerBool">
+                <channelAddress>binaryValue:1</channelAddress>
+                <unit>binaryValue;noUnits</unit>
+                <listening>true</listening>
+            </channel>
         </device>
 
-        <!-- Client device -->
+        <!-- BACnet Client -->
         <device id="ClientDevice">
-            <!-- BACnet device instance for client -->
-            <!-- Include server IP in deviceAddress for remote connection -->
             <deviceAddress>260001;192.168.0.122</deviceAddress>
+            <settings>isServer=false;localDevicePort=47809;devicePort=47808;broadcastIP=255.255.255.255;localBindAddress=0.0.0.0;localInstanceNumber=260001</settings>
 
-            <settings>
-                isServer=false;
-                localDevicePort=47809;    <!-- client's own BACnet port -->
-                devicePort=47808;         <!-- remote server's BACnet port -->
-                broadcastIP=255.255.255.255;
-                localBindAddress=0.0.0.0; <!-- bind to all interfaces -->
-                localDeviceId=260002
-            </settings>
-
-            <connectRetryInterval>5m</connectRetryInterval>
-
-            <!-- Client channels: must match server channelAddresses exactly -->
+            <!-- Must match server’s channels -->
             <channel id="ClientFloat">
-                <channelAddress>L'Float1</channelAddress>
-                <listening>true</listening>
+                <channelAddress>analogValue:1</channelAddress>
                 <unit>analogValue;degreesCelsius</unit>
+                <listening>true</listening>
             </channel>
 
             <channel id="ClientBool">
-                <channelAddress>L'Bool1</channelAddress>
-                <listening>true</listening>
+                <channelAddress>binaryValue:1</channelAddress>
                 <unit>binaryValue;noUnits</unit>
+                <listening>true</listening>
             </channel>
         </device>
 

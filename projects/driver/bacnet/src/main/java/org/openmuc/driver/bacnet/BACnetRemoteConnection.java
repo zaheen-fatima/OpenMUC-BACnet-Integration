@@ -156,9 +156,7 @@ public class BACnetRemoteConnection extends BACnetConnection implements DeviceEv
                 scanForChannels("");
             try {
                 return getParameterList();
-            } catch (BACnetException e) {
-                throw new ScanException(e);
-            } catch (PropertyValueException e) {
+            } catch (BACnetException | PropertyValueException e) {
                 throw new ScanException(e);
             }
         }
