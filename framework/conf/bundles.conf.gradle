@@ -55,11 +55,11 @@ dependencies {
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-lib-rest1', version: openmucVersion
 
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-server-restws', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-server-iec61850', version: openmucVersion
+    osgibundles group: 'org.openmuc.framework', name: 'openmuc-server-modbus', version: openmucVersion
 
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-driver-csv', version: openmucVersion
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-driver-bacnet', version: '1.0.0'
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-driver-aggregator', version: openmucVersion
+    osgibundles group: 'org.openmuc.framework', name: 'openmuc-driver-modbus', version: openmucVersion
     osgibundles group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-app-bacnetdemo', version: openmucVersion
 

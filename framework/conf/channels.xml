@@ -1,45 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
-    <driver id="bacnet">
+  <driver id="bacnet">
+    <device id="ServerDevice">
+      <deviceAddress>260003</deviceAddress>
+      <settings>isServer=true;localDevicePort=47808;broadcastIP=255.255.255.255;localBindAddress=192.168.0.122;localDeviceId=260003</settings>
+      <channel id="ServerFloat">
+        <channelAddress>analogValue:1</channelAddress>
+        <unit>analogValue;degreesCelsius</unit>
+        <listening>true</listening>
+      </channel>
+      <channel id="ServerBool">
+        <channelAddress>binaryValue:1</channelAddress>
+        <unit>binaryValue;noUnits</unit>
+        <listening>true</listening>
+      </channel>
+    </device>
+    <device id="ClientDevice">
+      <deviceAddress>260003;192.168.0.122</deviceAddress>
+      <settings>isServer=false;localDevicePort=47809;devicePort=47808;broadcastIP=255.255.255.255;localBindAddress=0.0.0.0;localInstanceNumber=260003</settings>
+      <channel id="ClientFloat">
+        <channelAddress>analogValue:1</channelAddress>
+          <serverMapping id="modbus">HOLDING_REGISTERS:1000:INTEGER</serverMapping>
 
-        <!-- BACnet Server -->
-        <device id="ServerDevice">
-            <deviceAddress>260001</deviceAddress>
-            <settings>isServer=true;localDevicePort=47808;broadcastIP=255.255.255.255;localBindAddress=192.168.0.122;localDeviceId=260001</settings>
-
-            <!-- Server exposes Analog Value 1 -->
-            <channel id="ServerFloat">
-                <channelAddress>analogValue:1</channelAddress>
-                <unit>analogValue;degreesCelsius</unit>
-                <listening>true</listening>
-            </channel>
-
-            <!-- Server exposes Binary Value 1 -->
-            <channel id="ServerBool">
-                <channelAddress>binaryValue:1</channelAddress>
-                <unit>binaryValue;noUnits</unit>
-                <listening>true</listening>
-            </channel>
-        </device>
-
-        <!-- BACnet Client -->
-        <device id="ClientDevice">
-            <deviceAddress>260001;192.168.0.122</deviceAddress>
-            <settings>isServer=false;localDevicePort=47809;devicePort=47808;broadcastIP=255.255.255.255;localBindAddress=0.0.0.0;localInstanceNumber=260001</settings>
-
-            <!-- Must match server’s channels -->
-            <channel id="ClientFloat">
-                <channelAddress>analogValue:1</channelAddress>
-                <unit>analogValue;degreesCelsius</unit>
-                <listening>true</listening>
-            </channel>
-
-            <channel id="ClientBool">
-                <channelAddress>binaryValue:1</channelAddress>
-                <unit>binaryValue;noUnits</unit>
-                <listening>true</listening>
-            </channel>
-        </device>
-
-    </driver>
+          <unit>analogValue;degreesCelsius</unit>
+        <listening>true</listening>
+      </channel>
+      <channel id="ClientBool">
+        <channelAddress>binaryValue:1</channelAddress>
+        <unit>binaryValue;noUnits</unit>
+        <listening>true</listening>
+      </channel>
+    </device>
+  </driver>
 </configuration>
